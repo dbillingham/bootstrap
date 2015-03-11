@@ -1171,7 +1171,7 @@ describe('datepicker directive', function () {
       });
 
       it('updates the model & calendar when input value changes', function() {
-        changeInputValueTo(inputEl, 'March 5, 1980');
+        changeInputValueTo(inputEl, '1980-03-05');
 
         expect($rootScope.date.getFullYear()).toEqual(1980);
         expect($rootScope.date.getMonth()).toEqual(2);
@@ -1352,15 +1352,24 @@ describe('datepicker directive', function () {
     });
 
     describe('european format', function () {
-      it('dd.MM.yyyy', function() {
-        var wrapElement = $compile('<div><input ng-model="date" datepicker-popup="dd.MM.yyyy"><div>')($rootScope);
+      var wrapElement;
+      beforeEach(inject(function() {
+        wrapElement = $compile('<div><input ng-model="date" datepicker-popup="dd.MM.yyyy"><div>')($rootScope);
         $rootScope.$digest();
         assignElements(wrapElement);
+      }));
 
+      it('dd.MM.yyyy', function() {
         changeInputValueTo(inputEl, '11.08.2013');
         expect($rootScope.date.getFullYear()).toEqual(2013);
         expect($rootScope.date.getMonth()).toEqual(7);
         expect($rootScope.date.getDate()).toEqual(11);
+      });
+      it('dd.MM.yyyy should be invalid when date is not in dateformat', function() {
+        changeInputValueTo(inputEl, '01.13.2015');
+        expect(wrapElement.find('input').hasClass('ng-invalid')).toBeTruthy();
+        expect(wrapElement.find('input').hasClass('ng-invalid-date')).toBeTruthy();
+        expect($rootScope.date).toBeUndefined();
       });
     });
 
